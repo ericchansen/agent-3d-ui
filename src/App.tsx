@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
-import { CopilotChat, CopilotChatConfigurationProvider, CopilotKitProvider, useAgent, useCopilotKit, useDefaultRenderTool, useInterrupt } from "@copilotkit/react-core/v2";
+import { CopilotChat, CopilotChatConfigurationProvider, CopilotKitProvider, useAgent, useConfigureSuggestions, useCopilotKit, useDefaultRenderTool, useInterrupt } from "@copilotkit/react-core/v2";
 import type { Interrupt, Message } from "@ag-ui/core";
 import { matchingIds, previewEdit, readState, type AgentState, type SceneObject, type Vector } from "./scene";
 import { Viewport } from "./Viewport";
@@ -80,6 +80,15 @@ function SceneWorkspace({ threadId, reconnect, newScene, error, onError }: {
   threadId: string; reconnect: boolean; newScene: () => void; error: string; onError: (error: string) => void;
 }) {
   useDefaultRenderTool();
+  useConfigureSuggestions({
+    consumerAgentId: "default",
+    available: "before-first-message",
+    suggestions: [
+      { title: "Find blue cylinders", message: "Find and highlight the blue cylinders in the scene using their actual color properties." },
+      { title: "Inspect the scene", message: "Inspect the scene and summarize its objects and properties without changing anything." },
+      { title: "Preview a color change", message: "Preview changing box-01 to green (#16A34A), keeping its position unchanged. Request approval before applying the edit." },
+    ],
+  });
   const { agent, isReady } = useAgent();
   const { copilotkit } = useCopilotKit();
   const initialized = useRef(false);
