@@ -9,12 +9,19 @@ test("hydrate, reload and new chat preserve native thread semantics without mode
   });
   await page.goto("/");
   await expect(page.getByRole("button", { name: "New scene" })).toBeEnabled();
+  for (const name of ["Find blue cylinders", "Inspect the scene", "Preview a color change"]) {
+    await expect(page.getByRole("button", { name, exact: true })).toBeVisible();
+  }
   const first = runs[0].threadId;
   await page.reload();
   await expect(page.getByRole("button", { name: "New scene" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Find blue cylinders", exact: true })).toBeVisible();
   expect(runs[1].threadId).toBe(first);
   await page.getByRole("button", { name: "New scene" }).click();
   await expect(page.getByRole("button", { name: "New scene" })).toBeEnabled();
+  for (const name of ["Find blue cylinders", "Inspect the scene", "Preview a color change"]) {
+    await expect(page.getByRole("button", { name, exact: true })).toBeVisible();
+  }
   expect(runs[2].threadId).not.toBe(first);
   expect(runs.every((run) => !run.messages?.length)).toBe(true);
   expect(external).toEqual([]);
@@ -73,6 +80,7 @@ test("small screens switch between usable scene and native assistant views", asy
   await expect(page.getByRole("complementary", { name: "Agent conversation" })).not.toBeVisible();
   const views = page.getByRole("navigation", { name: "Workspace view" });
   await views.getByRole("button", { name: "Assistant", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Find blue cylinders", exact: true })).toBeVisible();
   await expect(page.getByRole("textbox", { name: "Type a message..." })).toBeVisible();
   await views.getByRole("button", { name: "Scene", exact: true }).click();
   await expect(page.getByRole("region", { name: "Scene viewport" })).toBeVisible();

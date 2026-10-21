@@ -19,10 +19,7 @@ async function finalScene(response: BrowserResponse) {
   return snapshot.scene;
 }
 
-async function requestEdit(page: Page, color: string) {
-  const input = page.getByRole("textbox", { name: "Type a message..." });
-  await input.fill(`Change only box-01 to color ${color}. Read its current revision and properties, then call edit_objects for native approval.`);
-  await input.press("Enter");
+async function pendingEdit(page: Page) {
   for (let step = 0; step < 6; step++) {
     const approval = page.getByRole("region", { name: "Pending approval" }).last();
     await expect(approval).toBeVisible({ timeout: modelWait });
@@ -42,8 +39,10 @@ test("native preview, approval, reconnect and rejection preserve backend authori
   await expect(page.getByRole("button", { name: "New scene" })).toBeEnabled();
   expect((await finalScene(await opening)).revision).toBe(0);
   await page.getByRole("button", { name: "Amber block" }).click();
-  const approval = await requestEdit(page, "#16A34A");
+  await page.getByRole("button", { name: "Preview a color change", exact: true }).click();
+  const approval = await pendingEdit(page);
   await expect(approval.getByRole("button")).toHaveCount(2);
+  await expect(page.getByRole("button", { name: "Find blue cylinders", exact: true })).not.toBeVisible();
   await expect(approval.getByRole("cell", { name: /#F59E0B/ })).toBeVisible();
   await expect(approval.getByRole("cell", { name: /#16A34A/ })).toBeVisible();
   await expect(page.locator(".properties")).toContainText("#F59E0B");
@@ -68,7 +67,10 @@ test("native preview, approval, reconnect and rejection preserve backend authori
   await page.reload();
   expect(await finalScene(await reconnecting)).toEqual(committed);
   await expect(page.locator(".properties")).toContainText("#16A34A");
-  const denied = await requestEdit(page, "#E11D48");
+  const input = page.getByRole("textbox", { name: "Type a message..." });
+  await input.fill("Change only box-01 to color #E11D48. Read its current revision and properties, then call edit_objects for native approval.");
+  await input.press("Enter");
+  const denied = await pendingEdit(page);
   const rejecting = page.waitForResponse((response) => response.url().endsWith("/run"));
   await denied.getByRole("button", { name: "Reject", exact: true }).click();
   await expect(page.getByRole("button", { name: "New scene" })).toBeEnabled({ timeout: modelWait });

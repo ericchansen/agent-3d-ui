@@ -27,6 +27,8 @@ Select an object to inspect it, or ask the agent to find objects and propose edi
 
 Chat uses CopilotKit's native messages, composer, and suggestions without a welcome headline or an inactive attachment button.
 
+The empty chat offers **Find blue cylinders**, **Inspect the scene**, and **Preview a color change** through CopilotKit's built-in [static suggestions](https://github.com/CopilotKit/CopilotKit/blob/main/showcase/shell-docs/src/content/reference/hooks/useConfigureSuggestions.mdx). They appear before the first message and return with a new scene/chat. Clicking one sends a normal user request; edits still require native approval. The starter text is fixed, so displaying it does not require an extra model call.
+
 1. Filter the object list with `blue cylinder`. The two matching columns receive local outlines; materials and scene revision remain unchanged.
 2. Select an object using its button or the viewport. Use drag to orbit, right-drag to pan, scroll to zoom, or **Fit scene**.
 3. Ask `Find and highlight the blue cylinders`. Read the native tool cards and approve any native skill request after inspecting its arguments.
