@@ -18,7 +18,7 @@
   "dependencies": {
     "@ag-ui/client": "1.0.2",
     "@ag-ui/core": "1.0.2",
-    "@azure/identity": "4.14.0",
+    "@azure/identity": "4.14.1",
     "@copilotkit/react-core": "1.79.0",
     "@copilotkit/runtime": "1.79.0",
     "ajv": "8.20.0",
